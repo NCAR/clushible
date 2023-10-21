@@ -2,6 +2,9 @@
 
 import sys
 
+def info(msg:str):
+    sys.stdout.write(f"INFO: {msg}\n")
+
 def warn(msg:str):
     sys.stderr.write(f"WARN: {msg}")
     sys.stderr.flush()
