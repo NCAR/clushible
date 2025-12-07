@@ -1,0 +1,24 @@
+[core]
+#dry_run = false
+dry_run = true
+# debug = false
+# verbose: 0-3
+verbose = 0
+transport = "nfs"
+
+[logging]
+level = "INFO"
+file = "/var/log/clushible.log"
+
+[ansible]
+playbook_cmd = "/opt/ncar/ansible/bin/ansible-playbook"
+project_dir = "/opt/ncar/hsg-ansible"
+inventory = "/opt/ncar/hsg-ansible/dummy.yaml"
+playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+vault_passwd_file = "/root/.ansible_passwd"
+
+[clushible]
+runners = "localhost"
+
+#[bad]
+#does_not_exist = true

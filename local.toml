@@ -1,0 +1,24 @@
+[core]
+#dry_run = false
+dry_run = true
+# debug = false
+# verbose: 0-3
+verbose = 0
+transport = "nfs"
+
+[logging]
+level = "INFO"
+file = "/var/log/clushible.log"
+
+[ansible]
+playbook_cmd = "/opt/homebrew/bin/ansible-playbook"
+project_dir = "/Users/jbaker/Code/github/hsg-ansible/"
+inventory = "/users/jbaker/Code/github/hsg-ansible/gust_inventory.yml"
+playbook = "/Users/jbaker/Code/github/hsg-ansible/nwsc3-playbook.yml"
+vault_passwd_file = "/Users/jbaker/ansible.passwd"
+
+[clushible]
+runners = "localhost"
+
+#[bad]
+#does_not_exist = true
