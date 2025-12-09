@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clushible"
+version = "0.1.0"
+description = "ClusterShell Wrapper for Ansible - Scale up Ansible runners by providing upper level controller"
+readme = "README.md"
+authors = [
+    {name = "NCAR", email = "jbaker@ucar.edu"}
+]
+maintainers = [
+    {name = "NCAR", email = "jbaker@ucar.edu"}
+]
+
+keywords = ["ansible", "clustershell", "hpc", "automation", "configuration-management"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Developers",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+    "Topic :: System :: Clustering",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "clustershell>=1.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=3.0",
+    "black>=22.0",
+    "flake8>=4.0",
+    "mypy>=0.990",
+    "isort>=5.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/NCAR/clushible"
+Documentation = "https://github.com/NCAR/clushible"
+Repository = "https://github.com/NCAR/clushible.git"
+Issues = "https://github.com/NCAR/clushible/issues"
+
+[project.scripts]
+clushible = "ClushibleApp.Clushible:main"
+
+#[tool.setuptools]
+#packages = ["ClushibleApp"]
+
+[tool.setuptools.packages.find]
+include = ["ClushibleApp"]
+exclude = ["old*", "example_configs*"]
+
+[tool.setuptools.package-data]
+clushible = ["*.toml"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --cov=ClushibleApp --cov=cli"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
