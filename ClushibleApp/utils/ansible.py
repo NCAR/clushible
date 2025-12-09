@@ -25,6 +25,7 @@ def validate_ansible_setup(conf):
 def generate_playbook_cmd(conf, target:NodeSet, extra_vars:dict={}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     cmd = [
+        f"cd {conf.ansible.project_dir}; ",
         "/usr/bin/echo" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
         "-i", conf.ansible.inventory,

@@ -14,6 +14,7 @@ import pprint
 # Load Local Modules
 from . import cli
 from . import file
+from ..utils import msg
 
 def __to_namespace(d):
     """Recursively converts a dictionary (and its nested dicts) to SimpleNamespace."""
@@ -52,7 +53,7 @@ def get_config():
 
     c = Path(cli_ns.core_config)
     if not c.exists():
-        print(f"{c} config file does not exists. Exiting.")
+        msg.error(f"{c} config file does not exists. Exiting.")
         sys.exit(1)
 
     # Load TOML config
@@ -64,13 +65,13 @@ def get_config():
     # Iterate over sections and key,values that match structure from config file
     for section,opts in file_args.items():
         if section not in final_args.keys():
-            print(f"Section '[{section}]' in TOML config is not used. Skipping.")
+            msg.warn(f"Section '[{section}]' in TOML config is not used. Skipping.")
             continue
         for k,v in opts.items():
             # Alias because I'm lazy
             o = final_args[section]
             if k not in o.keys():
-                print(f"Parameter '{k}' not valid in '[{section}]' section")
+                msg.warn(f"Parameter '{k}' not valid in '[{section}]' section")
                 continue
             o[k] = v
 

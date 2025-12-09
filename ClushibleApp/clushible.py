@@ -21,7 +21,7 @@ from ClusterShell.Task import Task, task_self
 from ClushibleApp import config
 from ClushibleApp.utils import msg
 from ClushibleApp.utils.ansible import validate_ansible_setup, generate_playbook_cmd
-
+from ClushibleApp.utils.dispatch import get_runner_procs,run
 
 def show_config(args:dict):
     msg.info("Configuration")
@@ -64,19 +64,39 @@ def main():
     # Assume count of runners is good for now
     subtargets = [x for x in targets.split(len(runners))]
 
-    print(f"Number of subtargets: {len(subtargets)}")
-    for s in subtargets:
-        print(f"subtarget: {s}")
-
+    if conf.core.verbose > 0:
+        print(f"Number of subtargets sets: {len(subtargets)}")
+        for s in subtargets:
+            print(f"subtarget: {s}")
 
 
     # Data Deployment
     # TODO
 
     # Generate Ansible Playbook Commands
-    playbook_cmd = generate_playbook_cmd(conf, targets)
+    playbook_cmd = [generate_playbook_cmd(conf, t) for t in subtargets]
 
     # Execution
+    # Return a dictionary of nproc (or equivalent) processor count on the runners
+    rprocs = get_runner_procs(conf, runners)
+
+    # dummy command list for testing
+    #cmd_list = [f"echo 'hello {i}'" for i in range(100)]
+
+
+    results = run(conf, playbook_cmd)
+    print(results)
+    sys.exit(0)
+
+    print(f"\nStatus:")
+    for s in status:
+        try: 
+            print(str(s.decode('utf-8')))
+            print()
+        except AttributeError:
+            print(str(s))
+            print()
+            
 
     
     # Data Gather

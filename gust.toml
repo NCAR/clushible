@@ -1,0 +1,26 @@
+[core]
+#dry_run = false
+# dry_run = true
+# debug = false
+# verbose: 0-3
+verbose = 0
+transport = "nfs"
+
+[logging]
+level = "INFO"
+file = "/var/log/clushible.log"
+
+[ansible]
+playbook_cmd = "/opt/ncar/ansible/bin/ansible-playbook"
+project_dir = "/opt/ncar/hsg-ansible"
+inventory = "/opt/ncar/hsg-ansible/gust_inventory.yml"
+playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+vault_passwd_file = "/root/ansible.passwd"
+
+[clushible]
+runners = "gurlc[01-03]"
+collate = true # clubak -b
+coll_header = true # disables header block, output by nodeset
+
+#[bad]
+#does_not_exist = true
