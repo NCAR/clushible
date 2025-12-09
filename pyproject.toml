@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clushible"
-version = "0.1.0"
+version = "0.2.0"
 description = "ClusterShell Wrapper for Ansible - Scale up Ansible runners by providing upper level controller"
 readme = "README.md"
 authors = [
-    {name = "NCAR", email = "jbaker@ucar.edu"}
+    {name = "Jared D. Baker (NCAR)", email = "jbaker@ucar.edu"}
 ]
 maintainers = [
-    {name = "NCAR", email = "jbaker@ucar.edu"}
+    {name = "Jared D. Baker (NCAR)", email = "jbaker@ucar.edu"}
 ]
 
 keywords = ["ansible", "clustershell", "hpc", "automation", "configuration-management"]
@@ -55,7 +55,7 @@ clushible = "ClushibleApp.Clushible:main"
 #packages = ["ClushibleApp"]
 
 [tool.setuptools.packages.find]
-include = ["ClushibleApp"]
+include = ["ClushibleApp*"]
 exclude = ["old*", "example_configs*"]
 
 [tool.setuptools.package-data]
