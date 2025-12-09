@@ -1,0 +1,45 @@
+[core]
+
+# Always only say what to run, not actually run
+#dry_run = false
+
+# No-op presently
+#debug = false
+
+# Verbosity: 0-3
+verbose = 0
+# Use NFS for locations of the Ansible Porject and associated files
+transport = "nfs"
+
+[logging]
+# Default logging -- todo
+level = "INFO"
+file = "/var/log/clushible.log"
+
+[ansible]
+# Playbook Command
+playbook_cmd = "/opt/ncar/ansible/bin/ansible-playbook"
+
+# Your Ansible Project Dir (should be same on all NFS clients)
+project_dir = "/opt/ncar/hsg-ansible"
+
+# Absolute Path to Ansible Inventory
+inventory = "/opt/ncar/hsg-ansible/gust_inventory.yml"
+
+# Absolute Path to Ansible Playbook
+playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+
+# Absolute Path to Ansible Vault Password File
+vault_passwd_file = "/root/ansible.passwd"
+
+[clushible]
+
+# Default set of runners
+runners = "gurlc[01-03]"
+
+# Collate output
+collate = true # clubak -b
+
+# Disable the block header (a bit backwards, but follows clubak -L option
+coll_header = true
+

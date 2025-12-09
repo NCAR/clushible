@@ -51,16 +51,31 @@ def get_config():
         ref_args[section][opt] = ""
         cli_args[section][opt] = cli_dict[f"{section}_{opt}"]
 
-    c = Path(cli_ns.core_config)
-    if not c.exists():
-        msg.error(f"{c} config file does not exists. Exiting.")
-        sys.exit(1)
+    c_locs = [
+            cli_ns.core_config, 
+            os.environ['CLUSHIBLE_CONFIG'] if 'CLUSHIBLE_CONFIG' in os.environ.keys() else "", 
+            '/etc/clushible.toml',
+            f'{sys.prefix}/etc/clushible.toml']
+    c_locs[:] = [p for p in c_locs if p]
+
+    c = Path(c_locs.pop(0))
+    while not c.exists():
+        if cli_ns.core_verbose > 2:
+            msg.info(f"Popping {c} from config list as not found.")
+        if len(c_locs) == 0:
+            msg.error("No suitable configuration file found.")
+        c = Path(c_locs.pop(0))
+        #msg.error(f"{c} config file does not exists. Exiting.")
+        #sys.exit(1)
+
+    #cli_args['core']['config'] = str(c)
 
     # Load TOML config
     file_args = file.load_config(c)
 
     # Create a fixed structure copy to return, should be mostly empty, but may need deep copy later
     final_args = ref_args.copy()
+    
 
     # Iterate over sections and key,values that match structure from config file
     for section,opts in file_args.items():
@@ -80,6 +95,7 @@ def get_config():
        for k,v in opts.items():
            if v is not None:
                final_args[section][k] = v
+    final_args['core']['config'] = str(c)
 
     # Return as namespaced
     return __to_namespace(final_args)

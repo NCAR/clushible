@@ -40,7 +40,7 @@ def main():
     if conf.ansible.forks == ""  or conf.ansible.forks is None:
         conf.ansible.forks = 25
     
-    if conf.core.verbose > 0:
+    if conf.core.verbose > 2:
         show_config(conf)
 
     runners = NodeSet(conf.clushible.runners)

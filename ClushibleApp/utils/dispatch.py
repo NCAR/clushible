@@ -42,7 +42,7 @@ def get_runner_procs(conf, runners):
 
     return rprocs
 
-def run_task(cmd, t2r:dict):
+def run_task(conf, cmd, t2r:dict):
     th = threading.current_thread()
     thn = th.getName()
     thi = th.ident
@@ -53,6 +53,8 @@ def run_task(cmd, t2r:dict):
     #print(t2r)
     runner = t2r[thi]
     
+    if conf.core.verbose > 0:
+        print(f":: {runner}: {cmd}\n")
     #msg.info(f"{runner}({thn} {thi}): {cmd}")
     t.run(cmd,nodes=runner)
     t.join()
@@ -64,7 +66,7 @@ def check_thread():
     th = threading.current_thread()
     time.sleep(.2)
 
-def run(conf,cmds:list):
+def run(conf, cmds:list):
     r_ns = NodeSet(conf.clushible.runners)
 
     grange = [i for i in range(len(r_ns))]
@@ -90,7 +92,7 @@ def run(conf,cmds:list):
 
         rcs = []
         for c in cmds:
-            rcs.append(executor.submit(run_task,c,thread_to_runner))
+            rcs.append(executor.submit(run_task,conf,c,thread_to_runner))
         
         results = []
         for r in as_completed(rcs):

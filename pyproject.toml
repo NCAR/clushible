@@ -54,12 +54,15 @@ clushible = "ClushibleApp.Clushible:main"
 #[tool.setuptools]
 #packages = ["ClushibleApp"]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
 include = ["ClushibleApp*"]
 exclude = ["old*", "example_configs*"]
 
 [tool.setuptools.package-data]
-clushible = ["*.toml"]
+clushible = ["*.toml", "etc/*.toml"]
 
 [tool.black]
 line-length = 100
