@@ -37,8 +37,8 @@ def main():
     conf = config.get_config()
 
     # Set some silly defaults if not set
-    if conf.ansible.forks == ""  or conf.ansible.forks is None:
-        conf.ansible.forks = 25
+    #if conf.ansible.forks == 0  or conf.ansible.forks is None:
+    #    conf.ansible.forks = 25
     
     if conf.core.verbose > 2:
         show_config(conf)
@@ -55,30 +55,60 @@ def main():
     # Validate Ansible Paths Locally
     validate_ansible_setup(conf)
 
-
     # Get the runners
     nproc = "/usr/bin/nproc"
     if os.uname().sysname == "Darwin":
         nproc = "/usr/bin/sysctl -n hw.ncpu"
 
     # Assume count of runners is good for now
-    subtargets = [x for x in targets.split(len(runners))]
+    FORCED_NSETS=False
+    if conf.clushible.sets == 0:
+        conf.clushible.sets = len(runners)
+    else:
+        FORCED_NSETS=True
+
+    if conf.clushible.sets > len(targets):
+        msg.warn("nsets greater than len(targets), shrinking nsets to len(targets).")
+        conf.clushible.sets = len(targets)
+
+    # Return a dictionary of nproc (or equivalent) processor count on the runners
+    rprocs = get_runner_procs(conf, runners)
+
+    if conf.ansible.forks == 0 and conf.core.verbose > 0:
+        conf.ansible.forks = int(conf.clushible.fscale * max(rprocs.values()))
+        msg.info(f"Forks is auto-detected. Setting to {conf.ansible.forks}")
+
+    # MAGIC
+    subtargets = []
+    if len(targets)/conf.clushible.sets > (conf.clushible.fscale*max(rprocs.values())):
+        if FORCED_NSETS:
+            msg.warn("nsets specified as non-zero, but greater than recommended forks, expect slow down.")
+        else:
+            conf.clushible.sets = math.ceil(len(targets) / (conf.clushible.fscale*max(rprocs.values())))
+            if conf.core.verbose > 0:
+                msg.info(f"Setting nsets with groups of ~{conf.clushible.fscale}*{max(rprocs.values())} for '{conf.clushible.distribution}' distribution.")
+
+    if conf.clushible.distribution == 'pack':
+        tgt = list(targets)
+        for i in range(0, len(targets), conf.ansible.forks):
+            subtargets.append(NodeSet.fromlist(tgt[i:i+conf.ansible.forks]))
+    else:
+        # if conf.clushible.distribution == 'scatter'
+        subtargets = [x for x in targets.split(conf.clushible.sets)] 
+        
+    #subtargets = [x for x in targets.split(conf.clushible.sets)]
 
     if conf.core.verbose > 0:
         print(f"Number of subtargets sets: {len(subtargets)}")
         for s in subtargets:
-            print(f"subtarget: {s}")
+            print(f"subtarget: {s} ({len(s)})")
 
-
+    if conf.core.partition_only: sys.exit(0)
     # Data Deployment
     # TODO
 
     # Generate Ansible Playbook Commands
     playbook_cmd = [generate_playbook_cmd(conf, t) for t in subtargets]
-
-    # Execution
-    # Return a dictionary of nproc (or equivalent) processor count on the runners
-    rprocs = get_runner_procs(conf, runners)
 
     # dummy command list for testing
     #cmd_list = [f"echo 'hello {i}'" for i in range(100)]

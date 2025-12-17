@@ -52,7 +52,7 @@ def run_task(conf, cmd, t2r:dict):
 
     #print(t2r)
     runner = t2r[thi]
-    
+    print("") 
     if conf.core.verbose > 0:
         print(f":: {runner}: {cmd}\n")
     #msg.info(f"{runner}({thn} {thi}): {cmd}")

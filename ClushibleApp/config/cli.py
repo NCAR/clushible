@@ -13,6 +13,7 @@ def cli_parser():
     core_ctl = parser.add_argument_group('Core', 'Core options') 
     core_ctl.add_argument('-c', '--config', dest='core_config', default='', help='Path to Clushible TOML configuration file')
     core_ctl.add_argument('--dry-run', dest='core_dry_run', action='store_true', default=None, help='Only do a dry run of expected execution.')
+    core_ctl.add_argument('--partition-only', dest='core_partition_only', action='store_true', help='Only show partitioning info.')
     core_ctl.add_argument('--debug', dest='core_debug', action='store_true', help='Set to debug mode (noop / verbose)')
     core_ctl.add_argument('-v', '--verbose', dest='core_verbose', action='count', default=0, help='Application verbosity.')
     core_ctl.add_argument('--aggregate-logs', dest='core_aggregate_logs', action='store_true', help='Collect and compress Ansible logs onto controller.')
@@ -26,7 +27,10 @@ def cli_parser():
     # Clushible-specific Arguments
     ctl_group = parser.add_argument_group('Clushible', 'Clushible Controls')
     ctl_group.add_argument('--runners', dest='clushible_runners', help='Ansible Runners (clushible children)')
+    ctl_group.add_argument('--fscale', dest='clushible_fscale', type=int, help='Ansible fork scaling factor when forks are 0 (auto).')
     ctl_group.add_argument('-w', '--targets', dest='clushible_target', help='Ansible target nodes (pdsh/clush format).')
+    ctl_group.add_argument('-n', '--nsets', dest='clushible_sets', type=int, default=0, help='number of sets to split into.')
+    ctl_group.add_argument('--distribution', dest='clushible_distribution', default=None, choices=['pack', 'scatter'], help='Pack or Scatter')
     ctl_group.add_argument('-b', dest='clushible_collate', action='store_true', default=None, help='Collate output pdsh/clubak style.')
     ctl_group.add_argument('-L', dest='clushible_coll_header', action='store_true', default=None, help='Disable collated header block (clubak -L opt)')
  

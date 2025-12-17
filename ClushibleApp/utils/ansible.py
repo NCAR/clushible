@@ -42,7 +42,7 @@ def generate_playbook_cmd(conf, target:NodeSet, extra_vars:dict={}):
     for k,v in extra_vars.items():
         cmd.extend(["--extra-vars", f"{k}={v}"])
 
-    if conf.core.verbose > 0:
+    if conf.core.verbose > 1:
         msg.info(f"\nAnsible Playbook Command:\n{' '.join(cmd)}\n")
 
     return " ".join(cmd)

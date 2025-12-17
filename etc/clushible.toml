@@ -32,14 +32,26 @@ playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
 # Absolute Path to Ansible Vault Password File
 vault_passwd_file = "/root/ansible.passwd"
 
+# Forks (default: 0 meaning auto sense)
+forks = 0
+
 [clushible]
 
 # Default set of runners
 runners = "gurlc[01-03]"
 
+# Distribution (default: scatter) ["pack", "scatter"]
+#distribution = "scatter"
+
+# N-sets (partition targets into N sets (default of 0 will auto partition, homogenously)
+#nsets = 0
+
+# fscale (Fork Scaling, default 4; this is machine specific parameter and defaults to 4.
+#fscale = 4
+
 # Collate output
 collate = true # clubak -b
 
-# Disable the block header (a bit backwards, but follows clubak -L option
+# Disable the block header (a bit backwards, but follows clubak -L option)
 coll_header = true
 
