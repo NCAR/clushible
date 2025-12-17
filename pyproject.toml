@@ -7,14 +7,17 @@ name = "clushible"
 version = "0.2.0"
 description = "ClusterShell Wrapper for Ansible - Scale up Ansible runners by providing upper level controller"
 readme = "README.md"
+
 authors = [
     {name = "Jared D. Baker (NCAR)", email = "jbaker@ucar.edu"}
 ]
+
 maintainers = [
     {name = "Jared D. Baker (NCAR)", email = "jbaker@ucar.edu"}
 ]
 
 keywords = ["ansible", "clustershell", "hpc", "automation", "configuration-management"]
+
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: System Administrators",
@@ -27,9 +30,12 @@ classifiers = [
     "Topic :: System :: Systems Administration",
     "Topic :: System :: Clustering",
 ]
+
 requires-python = ">=3.8"
+
 dependencies = [
     "clustershell>=1.8",
+    "tomli; python_version < '3.11'"
 ]
 
 [project.optional-dependencies]
