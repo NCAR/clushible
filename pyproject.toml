@@ -1,10 +1,14 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0", "setuptools-scm", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
+dynamic = [
+    "version",
+]
+
 name = "clushible"
-version = "0.2.0"
+#version = "0.2.0"
 description = "ClusterShell Wrapper for Ansible - Scale up Ansible runners by providing upper level controller"
 readme = "README.md"
 
@@ -62,6 +66,10 @@ clushible = "ClushibleApp.Clushible:main"
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools_scm]
+version_file = "ClushibleApp/_version.py"
+
 
 [tool.setuptools.packages.find]
 include = ["ClushibleApp*"]

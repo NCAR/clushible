@@ -18,6 +18,7 @@ from ClusterShell.Task import Task, task_self
 
 
 # Load Local Modules
+from ClushibleApp import __version__
 from ClushibleApp import config
 from ClushibleApp.utils import msg
 from ClushibleApp.utils.ansible import validate_ansible_setup, generate_playbook_cmd
@@ -35,6 +36,10 @@ def show_config(args:dict):
 def main():
 
     conf = config.get_config()
+
+    if conf.core.version: 
+        print(f"Clushible {__version__}")
+        sys.exit(0)
 
     # Set some silly defaults if not set
     #if conf.ansible.forks == 0  or conf.ansible.forks is None:

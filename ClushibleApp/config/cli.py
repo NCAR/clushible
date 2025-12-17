@@ -16,6 +16,7 @@ def cli_parser():
     core_ctl.add_argument('--partition-only', dest='core_partition_only', action='store_true', help='Only show partitioning info.')
     core_ctl.add_argument('--debug', dest='core_debug', action='store_true', help='Set to debug mode (noop / verbose)')
     core_ctl.add_argument('-v', '--verbose', dest='core_verbose', action='count', default=0, help='Application verbosity.')
+    core_ctl.add_argument('-V', '--version', dest='core_version', action='store_true', help='Show version and exit')
     core_ctl.add_argument('--aggregate-logs', dest='core_aggregate_logs', action='store_true', help='Collect and compress Ansible logs onto controller.')
     core_ctl.add_argument('--transport', dest='core_transport', choices=['nfs', 'git'], help="Use NFS backend or Git backends.")
 
