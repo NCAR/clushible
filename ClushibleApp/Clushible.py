@@ -57,13 +57,15 @@ def main():
 
     if len(targets) == 0:
         msg.error("No targets specified, exiting.")
+
     # Validate Ansible Paths Locally
     validate_ansible_setup(conf)
 
-    # Get the runners
-    nproc = "/usr/bin/nproc"
-    if os.uname().sysname == "Darwin":
-        nproc = "/usr/bin/sysctl -n hw.ncpu"
+    # Return a dictionary of nproc (or equivalent) processor count on the runners
+    rprocs = get_runner_procs(conf)
+
+    # Reset runners based on testing usable runners
+    runners = NodeSet(conf.clushible.runners)
 
     # Assume count of runners is good for now
     FORCED_NSETS=False
@@ -76,12 +78,11 @@ def main():
         msg.warn("nsets greater than len(targets), shrinking nsets to len(targets).")
         conf.clushible.sets = len(targets)
 
-    # Return a dictionary of nproc (or equivalent) processor count on the runners
-    rprocs = get_runner_procs(conf, runners)
-
-    if conf.ansible.forks == 0 and conf.core.verbose > 0:
+    if conf.ansible.forks == 0:
+        if conf.core.verbose > 0:
+            msg.info(f"Forks is auto-detected. Setting to {conf.ansible.forks}")
         conf.ansible.forks = int(conf.clushible.fscale * max(rprocs.values()))
-        msg.info(f"Forks is auto-detected. Setting to {conf.ansible.forks}")
+        
 
     # MAGIC
     subtargets = []

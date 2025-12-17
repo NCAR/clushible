@@ -11,13 +11,14 @@ from ClusterShell.Task import Task, task_self
 
 from . import msg
 
-def get_runner_procs(conf, runners):
+def get_runner_procs(conf):
     nproc_cmd = "/usr/bin/nproc"
     if os.uname().sysname == "Darwin":
         nproc_cmd = "/usr/sbin/sysctl -n hw.ncpu"
     
+    runners = NodeSet(conf.clushible.runners)
     R = task_self()
-    R.run(nproc_cmd, nodes=runners)
+    R.run(nproc_cmd, nodes=conf.clushible.runners)
     for rc,nodelist in R.iter_retcodes():
         n = NodeSet.fromlist(nodelist)
         if conf.core.verbose > 0:
@@ -27,7 +28,10 @@ def get_runner_procs(conf, runners):
             runners.remove(n)
             msg.warn(f"Some runner are not responding or had a non-zero RC({rc}); excluding {n} from runners.")
 
+    conf.clushible.runners = str(runners)
+    print(conf.clushible.runners)
     rprocs = {}
+
     for b,nodelist in R.iter_buffers(match_keys=runners):
         ns = NodeSet.fromlist(nodelist)
         out = int(b.message().decode("utf-8"))
@@ -38,7 +42,7 @@ def get_runner_procs(conf, runners):
         msg.info(f"Max runner proc: {max(rprocs.values())}")
         msg.info(f"Min runner proc: {min(rprocs.values())}")
         if conf.core.verbose > 1:
-            msg.info(f"Recommended forks = {4*min(rprocs.values())}")
+            msg.info(f"Recommended forks = {conf.clushible.fscale*min(rprocs.values())}")
 
     return rprocs
 
