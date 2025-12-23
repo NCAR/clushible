@@ -7,7 +7,7 @@ except ImportError:
     import tomli as tomllib  # Fallback for older versions
 
 
-def load_config(config_path):
+def load_config(config_path: Path) -> dict:
     """Load and parse TOML configuration file."""
     try:
         with open(config_path, 'rb') as f:
@@ -18,5 +18,3 @@ def load_config(config_path):
     except tomllib.TOMLDecodeError as e:
         print(f"Error: Invalid TOML in '{config_path}': {e}", file=sys.stderr)
         sys.exit(1)
-
-

@@ -1,21 +1,10 @@
 #!/usr/bin/env python3.12
 
 # Load Modules
-import os
 import sys
-import random
-import time
-import io
 import math
 
-import threading
-from concurrent.futures.thread import ThreadPoolExecutor
-
-from pathlib import Path
-
-from ClusterShell.NodeSet import NodeSet,expand
-from ClusterShell.Task import Task, task_self
-
+from ClusterShell.NodeSet import NodeSet
 
 # Load Local Modules
 from ClushibleApp import __version__
@@ -41,10 +30,6 @@ def main():
         print(f"Clushible {__version__}")
         sys.exit(0)
 
-    # Set some silly defaults if not set
-    #if conf.ansible.forks == 0  or conf.ansible.forks is None:
-    #    conf.ansible.forks = 25
-    
     if conf.core.verbose > 2:
         show_config(conf)
 
@@ -109,8 +94,12 @@ def main():
         for s in subtargets:
             print(f"subtarget: {s} ({len(s)})")
 
-    if conf.core.partition_only: sys.exit(0)
-    # Data Deployment
+    if conf.core.partition_only: 
+        return 0
+    
+    # Data Deployment (if !nfs, do some sort of VCS operation and place password
+    # file in a proper spot. This might include doing some operations in a
+    # location like /tmp or /var/tmp.)
     # TODO
 
     # Generate Ansible Playbook Commands
@@ -119,27 +108,20 @@ def main():
     # dummy command list for testing
     #cmd_list = [f"echo 'hello {i}'" for i in range(100)]
 
-
+    # Results collected and returned as large string as usually collated
     results = run(conf, playbook_cmd)
     print(results)
-    sys.exit(0)
-
-    print(f"\nStatus:")
-    for s in status:
-        try: 
-            print(str(s.decode('utf-8')))
-            print()
-        except AttributeError:
-            print(str(s))
-            print()
-            
-
     
     # Data Gather
+    # Gather Log as necessary.
     
     # Error Reports
-    
+    # Find any worrisome errors.
+
+    # Do a final cleanup
+
     # Exit / Complete
+    return 0
 
-
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    sys.exit(main())

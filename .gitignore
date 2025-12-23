@@ -1,5 +1,6 @@
 __pycache__/
 build/
 clushible.egg-info/
+.ruff_cache/
 .vscode
 **/_version.py

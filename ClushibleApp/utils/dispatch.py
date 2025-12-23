@@ -33,7 +33,6 @@ def get_runner_procs(conf):
     rprocs = {}
 
     for b,nodelist in R.iter_buffers(match_keys=runners):
-        ns = NodeSet.fromlist(nodelist)
         out = int(b.message().decode("utf-8"))
         for n in nodelist: 
             rprocs[n] = out
@@ -48,7 +47,6 @@ def get_runner_procs(conf):
 
 def run_task(conf, cmd, t2r:dict):
     th = threading.current_thread()
-    thn = th.getName()
     thi = th.ident
 
     # Create ClusterShell Tasks w/ thread
@@ -67,7 +65,7 @@ def run_task(conf, cmd, t2r:dict):
 
 def check_thread():
     # ThreadPoolExecutgor creates lazy, make it force via sleep. FIX ME
-    th = threading.current_thread()
+    #th = threading.current_thread()
     time.sleep(.2)
 
 def run(conf, cmds:list):
@@ -88,7 +86,8 @@ def run(conf, cmds:list):
         #Create a map thread_to_runner[th.ident] = runner
         r_list = list(r_ns)
         for i in threading.enumerate():
-            if main_th == i: continue
+            if main_th == i:
+                continue
             thread_to_runner[i.ident] = r_list.pop(0)
             #print(thread_to_runner)
 
@@ -115,7 +114,8 @@ def collate_results(conf,results):
     for r in results:
         data = r.decode('utf-8').split('\n')
         for line in data:
-            if ':' not in line: continue
+            if ':' not in line:
+                continue
 
             node, info = line.split(':', 1)
             node = node.strip()

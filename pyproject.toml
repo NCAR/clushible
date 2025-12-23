@@ -50,6 +50,7 @@ dev = [
     "flake8>=4.0",
     "mypy>=0.990",
     "isort>=5.10",
+    "ruff",
 ]
 
 [project.urls]

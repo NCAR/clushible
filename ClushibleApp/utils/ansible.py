@@ -26,14 +26,14 @@ def generate_playbook_cmd(conf, target:NodeSet, extra_vars:dict={}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
-        f"export ANSIBLE_STDOUT_CALLBACK=clushible; ",
+        "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
         "/usr/bin/echo" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
-        "-i", conf.ansible.inventory,
-        "--forks", str(conf.ansible.forks),
-        "--vault-password-file", conf.ansible.vault_passwd_file,
+        f"-i {conf.ansible.inventory}"
+        f"--forks {str(conf.ansible.forks)}",
+        f"--vault-password-file {conf.ansible.vault_passwd_file}",
         "-C" if conf.ansible.check else "",
-        "-l", ",".join(expand(target)),
+        f"-l {','.join(expand(target))}", # ",".join(expand(target)),
         f"--tags={conf.ansible.tags}" if conf.ansible.tags else "",
         f"--skip-tags={conf.ansible.skip_tags}" if conf.ansible.skip_tags else "",
         str(conf.ansible.playbook),
