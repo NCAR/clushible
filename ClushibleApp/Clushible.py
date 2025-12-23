@@ -65,19 +65,19 @@ def main():
 
     if conf.ansible.forks == 0:
         if conf.core.verbose > 0:
-            msg.info(f"Forks is auto-detected. Setting to {conf.ansible.forks}")
-        conf.ansible.forks = int(conf.clushible.fscale * max(rprocs.values()))
+            msg.info(f"Forks is auto-detected. Setting to {int(conf.clushible.fscale*min(rprocs.values()))}")
+        conf.ansible.forks = int(conf.clushible.fscale * min(rprocs.values()))
         
 
     # MAGIC
     subtargets = []
-    if len(targets)/conf.clushible.sets > int(conf.clushible.fscale*max(rprocs.values())):
+    if len(targets)/conf.clushible.sets > int(conf.clushible.fscale*min(rprocs.values())):
         if FORCED_NSETS:
             msg.warn("nsets specified as non-zero, but greater than recommended forks, expect slow down.")
         else:
-            conf.clushible.sets = math.ceil(len(targets) / (conf.clushible.fscale*max(rprocs.values())))
+            conf.clushible.sets = math.ceil(len(targets) / (conf.clushible.fscale*min(rprocs.values())))
             if conf.core.verbose > 0:
-                msg.info(f"Setting nsets with groups of ~{conf.clushible.fscale}*{max(rprocs.values())} for '{conf.clushible.distribution}' distribution.")
+                msg.info(f"Setting nsets with groups of ~{conf.clushible.fscale}*{min(rprocs.values())} for '{conf.clushible.distribution}' distribution.")
 
     if conf.clushible.distribution == 'pack':
         tgt = list(targets)
@@ -90,9 +90,9 @@ def main():
     #subtargets = [x for x in targets.split(conf.clushible.sets)]
 
     if conf.core.verbose > 0:
-        print(f"Number of subtargets sets: {len(subtargets)}")
+        msg.info(f"Number of subtargets sets: {len(subtargets)}")
         for s in subtargets:
-            print(f"subtarget: {s} ({len(s)})")
+            msg.info(f"subtarget: {s} ({len(s)})")
 
     if conf.core.partition_only: 
         return 0
