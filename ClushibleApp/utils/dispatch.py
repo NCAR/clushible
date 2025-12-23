@@ -29,7 +29,6 @@ def get_runner_procs(conf):
             msg.warn(f"Some runner are not responding or had a non-zero RC({rc}); excluding {n} from runners.")
 
     conf.clushible.runners = str(runners)
-    print(conf.clushible.runners)
     rprocs = {}
 
     for b,nodelist in R.iter_buffers(match_keys=runners):
