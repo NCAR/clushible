@@ -1,1 +1,2 @@
-# Empty __init__.py
+# __init__.py
+from .final import get_config
