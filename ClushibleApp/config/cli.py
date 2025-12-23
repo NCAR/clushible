@@ -29,7 +29,7 @@ def cli_parser():
     ctl_group.add_argument('--runners', dest='clushible_runners', help='Ansible Runners (clushible children)')
     ctl_group.add_argument('--fscale', dest='clushible_fscale', type=int, help='Ansible fork scaling factor when forks are 0 (auto).')
     ctl_group.add_argument('-w', '--targets', dest='clushible_target', help='Ansible target nodes (pdsh/clush format).')
-    ctl_group.add_argument('-n', '--nsets', dest='clushible_sets', type=int, default=0, help='number of sets to split into.')
+    ctl_group.add_argument('-n', '--nsets', dest='clushible_sets', type=int, help='number of sets to split into.')
     ctl_group.add_argument('--distribution', dest='clushible_distribution', default=None, choices=['pack', 'scatter'], help='Pack or Scatter')
     ctl_group.add_argument('-b', dest='clushible_collate', action='store_true', default=None, help='Collate output pdsh/clubak style.')
     ctl_group.add_argument('-L', dest='clushible_coll_header', action='store_true', default=None, help='Disable collated header block (clubak -L opt)')

@@ -10,6 +10,7 @@ from types import SimpleNamespace
 # Load Local Modules
 from . import cli
 from . import file
+from .defaults import set_defaults
 from ..utils import msg
 
 def __to_namespace(d):
@@ -71,7 +72,9 @@ def get_config():
 
     # Create a fixed structure copy to return, should be mostly empty, but may need deep copy later
     final_args = ref_args.copy()
-    
+
+    # Set Defaults
+    set_defaults(final_args)
 
     # Iterate over sections and key,values that match structure from config file
     for section,opts in file_args.items():
@@ -93,6 +96,11 @@ def get_config():
                final_args[section][k] = v
     final_args['core']['config'] = str(c)
 
+    # Apply Defaults to unsets (arguably, this should be applied earlier)
+    #set_defaults(final_args)
+    conf_namespace = __to_namespace(final_args)
+    
+
     # Return as namespaced
-    return __to_namespace(final_args)
+    return conf_namespace
 
