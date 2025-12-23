@@ -71,7 +71,7 @@ def main():
 
     # MAGIC
     subtargets = []
-    if len(targets)/conf.clushible.sets > (conf.clushible.fscale*max(rprocs.values())):
+    if len(targets)/conf.clushible.sets > int(conf.clushible.fscale*max(rprocs.values())):
         if FORCED_NSETS:
             msg.warn("nsets specified as non-zero, but greater than recommended forks, expect slow down.")
         else:
