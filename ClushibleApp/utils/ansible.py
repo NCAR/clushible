@@ -29,7 +29,7 @@ def generate_playbook_cmd(conf, target:NodeSet, extra_vars:dict={}):
         "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
         "/usr/bin/echo" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
-        f"-i {conf.ansible.inventory}"
+        f"-i {conf.ansible.inventory}",
         f"--forks {str(conf.ansible.forks)}",
         f"--vault-password-file {conf.ansible.vault_passwd_file}",
         "-C" if conf.ansible.check else "",
