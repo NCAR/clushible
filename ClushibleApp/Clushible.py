@@ -67,31 +67,35 @@ def main() -> int:
     if conf.ansible.forks == 0:
         if conf.core.verbose > 0:
             msg.info(
-                f"Forks is auto-detected. Setting to {int(conf.clushible.fscale*min(rprocs.values()))}"
+                f"Forks is auto-detected. Setting to {int(conf.clushible.fscale * min(rprocs.values()))}"
             )
         conf.ansible.forks = int(conf.clushible.fscale * min(rprocs.values()))
 
     # MAGIC
     subtargets = []
-    if len(targets)/conf.clushible.sets > int(
-        conf.clushible.fscale*min(rprocs.values())
-        ):
+    if len(targets) / conf.clushible.sets > int(
+        conf.clushible.fscale * min(rprocs.values())
+    ):
         if FORCED_NSETS:
             msg.warn(
                 "nsets specified as non-zero, but greater than recommended forks, expect slow down."
             )
         else:
-            conf.clushible.sets = math.ceil(len(targets) / (conf.clushible.fscale*min(rprocs.values())))
+            conf.clushible.sets = math.ceil(
+                len(targets) / (conf.clushible.fscale * min(rprocs.values()))
+            )
             if conf.core.verbose > 0:
-                msg.info(f"Setting nsets with groups of ~{conf.clushible.fscale}*{min(rprocs.values())} for '{conf.clushible.distribution}' distribution.")
+                msg.info(
+                    f"Setting nsets with groups of ~{conf.clushible.fscale}*{min(rprocs.values())} for '{conf.clushible.distribution}' distribution."
+                )
 
-    if conf.clushible.distribution == 'pack':
+    if conf.clushible.distribution == "pack":
         tgt = list(targets)
         for i in range(0, len(targets), conf.ansible.forks):
-            subtargets.append(NodeSet.fromlist(tgt[i:i+conf.ansible.forks]))
+            subtargets.append(NodeSet.fromlist(tgt[i : i + conf.ansible.forks]))
     else:
         # if conf.clushible.distribution == 'scatter'
-        subtargets = [x for x in targets.split(conf.clushible.sets)] 
+        subtargets = [x for x in targets.split(conf.clushible.sets)]
 
     if conf.core.verbose > 0:
         msg.info(f"Number of subtargets sets: {len(subtargets)}")
