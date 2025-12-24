@@ -45,7 +45,11 @@ def main() -> int:
         msg.error("No targets specified, exiting.")
 
     # Validate Nodesets
-    if not conf.core.disable_target_validation or conf.clushible.valid_nodeset is not None:
+    if conf.clushible.valid_nodeset is None:
+        conf.core.disable_target_validation = True
+        msg.warn("Configuration of valid_nodeset is not defined. Skipping target validation.")
+
+    if not conf.core.disable_target_validation:
         invalid_targets = targets.difference(conf.clushible.valid_nodeset)
         if len(invalid_targets) > 0:
             msg.error(f"Invalid targets found: {invalid_targets}, exiting.")
