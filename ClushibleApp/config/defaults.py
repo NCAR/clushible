@@ -4,7 +4,7 @@ _defaults = {
     "core": {
         "config": None,
         "debug": False,
-        "disable_nodeset_validation": False,
+        "disable_target_validation": False,
         "dry_run": False,
         "verbose": 0,
         "partition_only": False,
