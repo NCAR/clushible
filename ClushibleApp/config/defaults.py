@@ -4,6 +4,7 @@ _defaults = {
     "core": {
         "config": None,
         "debug": False,
+        "disable_nodeset_validation": False,
         "dry_run": False,
         "verbose": 0,
         "partition_only": False,
@@ -13,6 +14,7 @@ _defaults = {
     },
     "clushible": {
         "runners": None,
+        "valid_nodeset": None,
         "collate": False,
         "coll_header": False,
         "distribution": "scatter",  # scatter or pack

@@ -11,6 +11,7 @@ def cli_parser():
    
     core_ctl = parser.add_argument_group('Core', 'Core options') 
     core_ctl.add_argument('-c', '--config', dest='core_config', default='', help='Path to Clushible TOML configuration file')
+    core_ctl.add_argument('--disable-target-validation', dest='core_disable_target_validation', action='store_true', help='Disable target nodeset validation.')
     core_ctl.add_argument('--dry-run', dest='core_dry_run', action='store_true', default=None, help='Only do a dry run of expected execution.')
     core_ctl.add_argument('--partition-only', dest='core_partition_only', action='store_true', help='Only show partitioning info.')
     core_ctl.add_argument('--debug', dest='core_debug', action='store_true', help='Set to debug mode (noop / verbose)')
@@ -27,6 +28,7 @@ def cli_parser():
     # Clushible-specific Arguments
     ctl_group = parser.add_argument_group('Clushible', 'Clushible Controls')
     ctl_group.add_argument('--runners', dest='clushible_runners', help='Ansible Runners (clushible children)')
+    ctl_group.add_argument('--valid-nodeset', dest='clushible_valid_nodeset', help='Valid nodeset for clushible operations.')
     ctl_group.add_argument('--fscale', dest='clushible_fscale', type=int, help='Ansible fork scaling factor when forks are 0 (auto).')
     ctl_group.add_argument('-w', '--targets', dest='clushible_target', help='Ansible target nodes (pdsh/clush format).')
     ctl_group.add_argument('-n', '--nsets', dest='clushible_sets', type=int, help='number of sets to split into.')
