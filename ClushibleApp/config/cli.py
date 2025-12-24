@@ -28,7 +28,7 @@ def cli_parser():
     # Clushible-specific Arguments
     ctl_group = parser.add_argument_group('Clushible', 'Clushible Controls')
     ctl_group.add_argument('--runners', dest='clushible_runners', help='Ansible Runners (clushible children)')
-    ctl_group.add_argument('--valid-nodeset', dest='clushible_valid_nodeset', help='Valid nodeset for clushible operations.')
+    ctl_group.add_argument('--valid-targets', dest='clushible_valid_targets', help='Valid target nodeset for clushible operations.')
     ctl_group.add_argument('--fscale', dest='clushible_fscale', type=int, help='Ansible fork scaling factor when forks are 0 (auto).')
     ctl_group.add_argument('-w', '--targets', dest='clushible_target', help='Ansible target nodes (pdsh/clush format).')
     ctl_group.add_argument('-n', '--nsets', dest='clushible_sets', type=int, help='number of sets to split into.')

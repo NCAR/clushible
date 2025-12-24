@@ -14,7 +14,7 @@ _defaults = {
     },
     "clushible": {
         "runners": None,
-        "valid_nodeset": None,
+        "valid_targets": None,
         "collate": False,
         "coll_header": False,
         "distribution": "scatter",  # scatter or pack
