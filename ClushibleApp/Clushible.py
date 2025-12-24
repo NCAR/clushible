@@ -10,7 +10,10 @@ from ClusterShell.NodeSet import NodeSet
 from ClushibleApp import __version__
 from ClushibleApp import config
 from ClushibleApp.utils import msg
-from ClushibleApp.utils.ansible import validate_ansible_setup, generate_playbook_cmd
+from ClushibleApp.utils.ansible import (
+    validate_ansible_setup,
+    generate_playbook_cmd,
+)
 from ClushibleApp.utils.dispatch import get_runner_procs, run
 
 
@@ -45,9 +48,14 @@ def main() -> int:
         msg.error("No targets specified, exiting.")
 
     # Validate Nodesets
-    if conf.clushible.valid_targets is None and not conf.core.disable_target_validation:
+    if (
+        conf.clushible.valid_targets is None
+        and not conf.core.disable_target_validation
+    ):
         conf.core.disable_target_validation = True
-        msg.warn("Configuration of valid_targets is not defined. Skipping target validation.")
+        msg.warn(
+            "Configuration of valid_targets is not defined. Skipping target validation."
+        )
 
     if not conf.core.disable_target_validation:
         invalid_targets = targets.difference(conf.clushible.valid_targets)
@@ -71,7 +79,9 @@ def main() -> int:
         FORCED_NSETS = True
 
     if conf.clushible.sets > len(targets):
-        msg.warn("nsets greater than len(targets), shrinking nsets to len(targets).")
+        msg.warn(
+            "nsets greater than len(targets), shrinking nsets to len(targets)."
+        )
         conf.clushible.sets = len(targets)
 
     if conf.ansible.forks == 0:
@@ -102,7 +112,9 @@ def main() -> int:
     if conf.clushible.distribution == "pack":
         tgt = list(targets)
         for i in range(0, len(targets), conf.ansible.forks):
-            subtargets.append(NodeSet.fromlist(tgt[i : i + conf.ansible.forks]))
+            subtargets.append(
+                NodeSet.fromlist(tgt[i : i + conf.ansible.forks])
+            )
     else:
         # if conf.clushible.distribution == 'scatter'
         subtargets = [x for x in targets.split(conf.clushible.sets)]
