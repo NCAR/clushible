@@ -11,22 +11,23 @@ from ClushibleApp import __version__
 from ClushibleApp import config
 from ClushibleApp.utils import msg
 from ClushibleApp.utils.ansible import validate_ansible_setup, generate_playbook_cmd
-from ClushibleApp.utils.dispatch import get_runner_procs,run
+from ClushibleApp.utils.dispatch import get_runner_procs, run
 
-def show_config(args:dict):
+
+def show_config(args: dict) -> None:
     msg.info("Configuration")
     sys.stdout.write("====================\n")
-    for section,opts in vars(args).items():
+    for section, opts in vars(args).items():
         print(f"{section}:")
-        for key,val in vars(opts).items():
+        for key, val in vars(opts).items():
             print(f"  {key}: {val}")
     sys.stdout.write("====================\n\n")
 
-def main():
 
+def main() -> int:
     conf = config.get_config()
 
-    if conf.core.version: 
+    if conf.core.version:
         print(f"Clushible {__version__}")
         sys.exit(0)
 
@@ -53,11 +54,11 @@ def main():
     runners = NodeSet(conf.clushible.runners)
 
     # Assume count of runners is good for now
-    FORCED_NSETS=False
+    FORCED_NSETS = False
     if conf.clushible.sets == 0:
         conf.clushible.sets = len(runners)
     else:
-        FORCED_NSETS=True
+        FORCED_NSETS = True
 
     if conf.clushible.sets > len(targets):
         msg.warn("nsets greater than len(targets), shrinking nsets to len(targets).")
@@ -65,15 +66,20 @@ def main():
 
     if conf.ansible.forks == 0:
         if conf.core.verbose > 0:
-            msg.info(f"Forks is auto-detected. Setting to {int(conf.clushible.fscale*min(rprocs.values()))}")
+            msg.info(
+                f"Forks is auto-detected. Setting to {int(conf.clushible.fscale*min(rprocs.values()))}"
+            )
         conf.ansible.forks = int(conf.clushible.fscale * min(rprocs.values()))
-        
 
     # MAGIC
     subtargets = []
-    if len(targets)/conf.clushible.sets > int(conf.clushible.fscale*min(rprocs.values())):
+    if len(targets)/conf.clushible.sets > int(
+        conf.clushible.fscale*min(rprocs.values())
+        ):
         if FORCED_NSETS:
-            msg.warn("nsets specified as non-zero, but greater than recommended forks, expect slow down.")
+            msg.warn(
+                "nsets specified as non-zero, but greater than recommended forks, expect slow down."
+            )
         else:
             conf.clushible.sets = math.ceil(len(targets) / (conf.clushible.fscale*min(rprocs.values())))
             if conf.core.verbose > 0:
@@ -86,17 +92,15 @@ def main():
     else:
         # if conf.clushible.distribution == 'scatter'
         subtargets = [x for x in targets.split(conf.clushible.sets)] 
-        
-    #subtargets = [x for x in targets.split(conf.clushible.sets)]
 
     if conf.core.verbose > 0:
         msg.info(f"Number of subtargets sets: {len(subtargets)}")
         for s in subtargets:
             msg.info(f"subtarget: {s} ({len(s)})")
 
-    if conf.core.partition_only: 
+    if conf.core.partition_only:
         return 0
-    
+
     # Data Deployment (if !nfs, do some sort of VCS operation and place password
     # file in a proper spot. This might include doing some operations in a
     # location like /tmp or /var/tmp.)
@@ -105,16 +109,13 @@ def main():
     # Generate Ansible Playbook Commands
     playbook_cmd = [generate_playbook_cmd(conf, t) for t in subtargets]
 
-    # dummy command list for testing
-    #cmd_list = [f"echo 'hello {i}'" for i in range(100)]
-
     # Results collected and returned as large string as usually collated
     results = run(conf, playbook_cmd)
     print(results)
-    
+
     # Data Gather
     # Gather Log as necessary.
-    
+
     # Error Reports
     # Find any worrisome errors.
 
@@ -122,6 +123,7 @@ def main():
 
     # Exit / Complete
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
