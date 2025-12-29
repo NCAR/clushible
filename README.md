@@ -17,6 +17,8 @@ service nodes that utilized ClusterShell configuration.
 
 Presently, Ansible and your Ansible directory should be on shared NFS or other type of filesystem.
 
+Python. Please try to use at least Python 3.8 or preferrably Python 3.11 or newer.
+
 A Python virtual environment is a preferred method for installation. Basic
 requirements for the installation are a TOML implementation (`tomli` or
 `tomllib` (Python >= 3.11)) and ClusterShell. A `requirements.txt` file is
