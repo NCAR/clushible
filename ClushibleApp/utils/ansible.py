@@ -1,11 +1,11 @@
 #!/usr/bin/env python3.12
 
+import datetime as dt
 from pathlib import Path
 
 from ClusterShell.NodeSet import NodeSet, expand
 
 from . import msg
-
 
 def validate_ansible_setup(conf):
     """Validates that Ansible paths exist on the local system."""
@@ -32,9 +32,14 @@ def validate_ansible_setup(conf):
 
 def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
+    now = dt.datetime.now()
+    date_str = now.strftime('%Y%m%d-%H%M')
+
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
         "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
+        "/usr/bin/mkdir -p /var/tmp/clushible/;",
+        f"CLUSHIBLE_LOCAL_FILE=$(/usr/bin/mktemp '/var/tmp/clushible/{date_str}.XXX.log');",
         "/usr/bin/echo" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
         f"-i {conf.ansible.inventory}",
@@ -52,7 +57,11 @@ def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     for k, v in extra_vars.items():
         cmd.extend(["--extra-vars", f"{k}={v}"])
 
-    if conf.core.verbose > 1:
-        msg.info(f"\nAnsible Playbook Command:\n{' '.join(cmd)}\n")
+    # Append a final tee
+    cmd.append(" | /usr/bin/tee ${CLUSHIBLE_LOCAL_FILE}")
+    final_cmd_str = " ".join(cmd)
 
-    return " ".join(cmd)
+    if conf.core.verbose > 1:
+        msg.info(f"\nAnsible Playbook Command:\n{final_cmd_str}\n")
+
+    return final_cmd_str
