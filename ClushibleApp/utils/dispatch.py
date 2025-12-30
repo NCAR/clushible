@@ -14,8 +14,15 @@ from . import msg
 
 def get_runner_procs(conf):
     nproc_cmd = "/usr/bin/nproc"
+    conf.clushible.echo = "/usr/bin/echo"
+    conf.clushible.mkdir = "/usr/bin/mkdir"
+    conf.clushible.mktemp = "/usr/bin/mktemp"
+
     if os.uname().sysname == "Darwin":
         nproc_cmd = "/usr/sbin/sysctl -n hw.ncpu"
+        conf.clushible.echo = "/bin/echo"
+        conf.clushible.mkdir = "/bin/mkdir"
+        conf.clushible.mktemp = "/usr/bin/mktemp"
 
     runners = NodeSet(conf.clushible.runners)
     R = task_self()

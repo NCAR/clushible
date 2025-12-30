@@ -1,0 +1,68 @@
+# Example Clushible Configuration File
+
+[core]
+# Perform a dry run without executing Ansible.
+#dry_run = false
+
+# Logging level
+#logging_level = "INFO"
+
+# Application verbosity. Can be specified multiple times for increased verbosity. Max is 2 presently.
+#verbose = 0
+
+
+[ansible]
+# Ansible check mode.
+#check = "false"
+
+# Ansible forks (parallelism). A value of 0 means auto scale based on CPU cores.
+forks = 0
+
+# Ansible project directory.
+#project_dir = "/opt/ncar/hsg-ansible"
+project_dir = "/Users/jbaker/Code/github/hsg-ansible"
+
+# Ansible playbook to run.
+#playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+playbook = "/Users/jbaker/Code/github/hsg-ansible/nwsc3-playbook.yml"
+
+# Ansible playbook command.
+playbook_cmd = "/opt/homebrew/bin/ansible-playbook"
+
+# Ansible inventory file or directory.
+#inventory = "/opt/ncar/hsg-ansible/derecho-inventory.yml"
+inventory = "/Users/jbaker/Code/github/hsg-ansible/derecho_inventory.yml"
+
+# Ansible vault password file.
+vault_password_file = "/Users/jbaker/ansible.passwd"
+
+
+[clushible]
+# Ansible Runners (clushible children)
+#runners = "@su-leaders"
+
+# Disable target nodeset validation.
+#disable_target_validation = false
+
+# Valid target nodeset for clushible operations.
+valid_targets = "dec[0001-2488],deg[0001-0082]"
+
+# Ansible fork scaling factor when forks are 0 (auto). A value of 0 defaults to internal of 4 from empirical testing.
+#fscale = 0
+
+# Pack or Scatter
+#distribution = "scatter"
+
+# Collate output pdsh/clubak style.
+#collate = true
+
+# Disable collated header block (clubak -L opt)
+#coll_header = true
+
+# Only show partitioning info.
+#partition_only = false
+
+# Use NFS backend or Git backends.
+#transport = "nfs"
+
+

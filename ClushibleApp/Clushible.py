@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.12
 
 # Load Modules
+from pprint import pprint
 import sys
 import math
 
@@ -8,7 +9,7 @@ from ClusterShell.NodeSet import NodeSet
 
 # Load Local Modules
 from ClushibleApp import __version__
-from ClushibleApp import config
+from ClushibleApp.config import CONFIG
 from ClushibleApp.utils import msg
 from ClushibleApp.utils.ansible import (
     validate_ansible_setup,
@@ -28,7 +29,8 @@ def show_config(args: dict) -> None:
 
 
 def main() -> int:
-    conf = config.get_config()
+    # Configuration is now a singleton (still namespace-based though)
+    conf = CONFIG
 
     if conf.core.version:
         print(f"Clushible {__version__}")
@@ -38,11 +40,12 @@ def main() -> int:
         show_config(conf)
 
     runners = NodeSet(conf.clushible.runners)
-    targets = NodeSet(conf.clushible.target)
+    targets = NodeSet(conf.clushible.targets)
 
     if len(runners) == 0:
         msg.warn("No runners specified, defaulting to localhost.")
-        runners = NodeSet("localhost")
+        conf.clushible.runners = "localhost"
+        runners = NodeSet(conf.clushible.runners)
 
     if len(targets) == 0:
         msg.error("No targets specified, exiting.")
@@ -50,14 +53,14 @@ def main() -> int:
     # Validate Nodesets
     if (
         conf.clushible.valid_targets is None
-        and not conf.core.disable_target_validation
+        and not conf.clushible.disable_target_validation
     ):
-        conf.core.disable_target_validation = True
+        conf.clushible.disable_target_validation = True
         msg.warn(
             "Configuration of valid_targets is not defined. Skipping target validation."
         )
 
-    if not conf.core.disable_target_validation:
+    if not conf.clushible.disable_target_validation:
         invalid_targets = targets.difference(conf.clushible.valid_targets)
         if len(invalid_targets) > 0:
             msg.error(f"Invalid targets found: {invalid_targets}, exiting.")
@@ -71,19 +74,22 @@ def main() -> int:
     # Reset runners based on testing usable runners
     runners = NodeSet(conf.clushible.runners)
 
+    # Make sure fscale is set to non-zero
+    if conf.clushible.fscale == 0:
+        conf.clushible.fscale = 4  # Empirical default
+
     # Assume count of runners is good for now
     FORCED_NSETS = False
-    if conf.clushible.sets == 0:
-        conf.clushible.sets = len(runners)
+    if conf.clushible.nsets == 0:
+        conf.clushible.nsets = len(runners)
     else:
         FORCED_NSETS = True
 
-    if conf.clushible.sets > len(targets):
+    if int(conf.clushible.nsets) > len(targets):
         msg.warn(
             "nsets greater than len(targets), shrinking nsets to len(targets)."
         )
-        conf.clushible.sets = len(targets)
-
+        conf.clushible.nsets = len(targets)
     if conf.ansible.forks == 0:
         if conf.core.verbose > 0:
             msg.info(
@@ -93,7 +99,7 @@ def main() -> int:
 
     # MAGIC
     subtargets = []
-    if len(targets) / conf.clushible.sets > int(
+    if len(targets) / conf.clushible.nsets > int(
         conf.clushible.fscale * min(rprocs.values())
     ):
         if FORCED_NSETS:
@@ -101,7 +107,7 @@ def main() -> int:
                 "nsets specified as non-zero, but greater than recommended forks, expect slow down."
             )
         else:
-            conf.clushible.sets = math.ceil(
+            conf.clushible.nsets = math.ceil(
                 len(targets) / (conf.clushible.fscale * min(rprocs.values()))
             )
             if conf.core.verbose > 0:
@@ -117,14 +123,14 @@ def main() -> int:
             )
     else:
         # if conf.clushible.distribution == 'scatter'
-        subtargets = [x for x in targets.split(conf.clushible.sets)]
+        subtargets = [x for x in targets.split(conf.clushible.nsets)]
 
     if conf.core.verbose > 0:
         msg.info(f"Number of subtargets sets: {len(subtargets)}")
         for s in subtargets:
             msg.info(f"subtarget: {s} ({len(s)})")
 
-    if conf.core.partition_only:
+    if conf.clushible.partition_only:
         return 0
 
     # Data Deployment (if !nfs, do some sort of VCS operation and place password

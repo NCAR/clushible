@@ -7,44 +7,53 @@ from ClusterShell.NodeSet import NodeSet, expand
 
 from . import msg
 
+
 def validate_ansible_setup(conf):
     """Validates that Ansible paths exist on the local system."""
     if not Path(conf.ansible.playbook_cmd).exists():
         msg.error(
-            f"Ansible path {conf.ansible.playbook_cmd} does not exist locally. Exiting."
+            f"Ansible path '{conf.ansible.playbook_cmd}' does not exist locally. Exiting."
         )
 
     if not Path(conf.ansible.project_dir).is_dir():
         msg.error(
-            f"Ansible project dir {conf.ansible.project_dir} does not exist. Exiting."
+            f"Ansible project dir '{conf.ansible.project_dir}' does not exist. Exiting."
+        )
+
+    if conf.ansible.playbook == "":
+        msg.error("No Ansible playbook specified. Exiting.")
+
+    if not Path(conf.ansible.playbook).is_file():
+        msg.error(
+            f"Ansible playbook file '{conf.ansible.playbook}' does not exist. Exiting."
         )
 
     if not Path(conf.ansible.inventory).exists():
         msg.error(
-            f"Ansible inventory file {conf.ansible.inventory} does not exist. Exiting."
+            f"Ansible inventory file '{conf.ansible.inventory}' does not exist. Exiting."
         )
 
-    if not Path(conf.ansible.vault_passwd_file).exists():
+    if not Path(conf.ansible.vault_password_file).exists():
         msg.error(
-            f"Ansible vault password file {conf.ansible.vault_passwd_file} does not exist. Exiting."
+            f"Ansible vault password file '{conf.ansible.vault_password_file}' does not exist. Exiting."
         )
 
 
 def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     now = dt.datetime.now()
-    date_str = now.strftime('%Y%m%d-%H%M')
+    date_str = now.strftime("%Y%m%d-%H%M")
 
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
         "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
-        "/usr/bin/mkdir -p /var/tmp/clushible/;",
-        f"CLUSHIBLE_LOCAL_FILE=$(/usr/bin/mktemp '/var/tmp/clushible/{date_str}.XXX.log');",
-        "/usr/bin/echo" if conf.core.dry_run else "",
+        f"{conf.clushible.mkdir} -p /var/tmp/clushible/;",
+        f"CLUSHIBLE_LOCAL_FILE=$({conf.clushible.mktemp} '/var/tmp/clushible/{date_str}.XXX.log');",
+        f"{conf.clushible.echo}" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
         f"-i {conf.ansible.inventory}",
         f"--forks {str(conf.ansible.forks)}",
-        f"--vault-password-file {conf.ansible.vault_passwd_file}",
+        f"--vault-password-file {conf.ansible.vault_password_file}",
         "-C" if conf.ansible.check else "",
         f"-l {','.join(expand(target))}",  # ",".join(expand(target)),
         f"--tags={conf.ansible.tags}" if conf.ansible.tags else "",

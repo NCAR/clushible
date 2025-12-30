@@ -1,2 +1,2 @@
 # __init__.py
-from .final import get_config as get_config
+from .Config import CONFIG as CONFIG
