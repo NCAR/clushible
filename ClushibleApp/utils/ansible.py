@@ -11,22 +11,22 @@ def validate_ansible_setup(conf):
     """Validates that Ansible paths exist on the local system."""
     if not Path(conf.ansible.playbook_cmd).exists():
         msg.error(
-            f"Ansible path {conf.ansible.playbook_cmd} does not exist locally. Exiting."
+            f"Ansible path '{conf.ansible.playbook_cmd}' does not exist locally. Exiting."
         )
 
     if not Path(conf.ansible.project_dir).is_dir():
         msg.error(
-            f"Ansible project dir {conf.ansible.project_dir} does not exist. Exiting."
+            f"Ansible project dir '{conf.ansible.project_dir}' does not exist. Exiting."
         )
 
     if not Path(conf.ansible.inventory).exists():
         msg.error(
-            f"Ansible inventory file {conf.ansible.inventory} does not exist. Exiting."
+            f"Ansible inventory file '{conf.ansible.inventory}' does not exist. Exiting."
         )
 
-    if not Path(conf.ansible.vault_passwd_file).exists():
+    if not Path(conf.ansible.vault_password_file).exists():
         msg.error(
-            f"Ansible vault password file {conf.ansible.vault_passwd_file} does not exist. Exiting."
+            f"Ansible vault password file '{conf.ansible.vault_password_file}' does not exist. Exiting."
         )
 
 

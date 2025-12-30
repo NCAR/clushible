@@ -1,0 +1,161 @@
+# TOML Configuration CLI Options
+# Also used to dump a configuration file template
+# 
+# Special value for X.example: "SUPPRESS" means do not include in config file
+#
+
+[core]
+config.name = ["-c", "--config"]
+config.help = "Path to Clushible TOML configuration file"
+config.default = "None"
+config.example = "SUPPRESS" # Cannot be used in config file
+config.internal_default = "/etc/clushible.toml"
+
+dry_run.name = ["--dry-run"]
+dry_run.help = "Perform a dry run without executing Ansible."
+dry_run.action = "store_true"
+dry_run.example = false
+dry_run.internal_default = false
+
+
+dump_config_template.name = ["--dump-config-template"]
+dump_config_template.help = "Dump a configuration file template and exit."
+dump_config_template.action = "store_true"
+dump_config_template.example = "SUPPRESS"
+dump_config_template.internal_default = false
+
+logging_level.name = ["--logging-level"]
+logging_level.choices = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+logging_level.help = "Logging level"
+logging_level.example = "INFO"
+logging_level.internal_default = "WARNING"
+
+verbose.name = ["-v", "--verbose"]
+verbose.help = "Application verbosity. Can be specified multiple times for increased verbosity. Max is 2 presently."
+verbose.action = "count"
+verbose.default = 0
+verbose.example = 0
+verbose.internal_default = 0
+
+version.name = ["-V", "--version"]
+version.help = "Show version and exit"
+version.action = "store_true"
+version.example = "SUPPRESS"
+version.internal_default = false
+
+[ansible]
+check.name = ["--check"]
+check.help = "Ansible check mode."
+check.action = "store_true"
+check.example = false
+check.internal_default = false
+
+forks.name = ["-f", "--forks"]
+forks.help = "Ansible forks (parallelism). A value of 0 means auto scale based on CPU cores."
+forks.type = "int"
+forks.example = 0
+forks.internal_default = 0
+
+project_dir.name = ["--project-dir"]
+project_dir.help = "Ansible project directory."
+project_dir.type = "str"
+project_dir.default = "None"
+project_dir.example = "/opt/ncar/hsg-ansible"
+project_dir.internal_default = ""
+
+playbook_cmd.name = ["--playbook-cmd"]
+playbook_cmd.help = "Ansible playbook command."
+#playbook_cmd.default = "ansible-playbook"
+playbook_cmd.type = "str"
+playbook_cmd.example = "/opt/ansible/bin/ansible-playbook"
+playbook_cmd.internal_default = "ansible-playbook"
+
+inventory.name = ["-i", "--inventory"]
+inventory.help = "Ansible inventory file or directory."
+inventory.type = "str"
+inventory.default = "None"
+inventory.example = "/opt/ncar/hsg-ansible/derecho-inventory.yml"
+inventory.internal_default = ""
+
+vault_password_file.name = ["--vault-password-file"]
+vault_password_file.help = "Ansible vault password file."
+vault_password_file.type = "str"
+vault_password_file.default = "None"
+vault_password_file.example = "/root/ansible.passwd"
+
+tags.name = ["--tags"]
+tags.help = "Ansible tags to run."
+tags.type = "str"
+tags.example = "SUPPRESS"
+
+skip_tags.name = ["--skip-tags"]
+skip_tags.help = "Ansible tags to skip."
+skip_tags.type = "str"
+skip_tags.example = "SUPPRESS"
+
+[clushible]
+runners.name = ["--runners"]
+runners.help = "Ansible Runners (clushible children)"
+runners.type = "str"
+runners.example = "@su-leaders"
+
+targets.name = ["-w", "--targets"]
+targets.help = "Ansible target nodes (pdsh/clush format). Ex. dec[0001-2488],deg[0001-0082]"
+targets.type = "str"
+targets.example = "SUPPRESS"
+
+nsets.name = ["-n", "--nsets"]
+nsets.help = "Number of sets to force split into. "
+nsets.type = "int"
+nsets.example = "SUPPRESS"
+nsets.internal_default = 0
+
+disable_target_validation.name = ["--disable-target-validation"]
+disable_target_validation.help = "Disable target nodeset validation."
+disable_target_validation.action = "store_true"
+disable_target_validation.default = "None"
+disable_target_validation.example = false
+
+valid_targets.name = ["--valid-targets"]
+valid_targets.help = "Valid target nodeset for clushible operations."
+valid_targets.type = "str"
+valid_targets.example = "dec[0001-2488],deg[0001-0082]"
+
+fscale.name = ["--fscale"]
+fscale.help = "Ansible fork scaling factor when forks are 0 (auto). A value of 0 defaults to internal of 4 from empirical testing."
+fscale.type = "int"
+fscale.example = 0
+fscale.internal_default = 4
+
+distribution.name = ["--distribution"]
+distribution.help = "Pack or Scatter"
+distribution.choices = ["pack", "scatter"]
+distribution.type = "str"
+distribution.example = "scatter"
+distribution.internal_default = "scatter"
+
+collate.name = ["-b"]
+collate.help = "Collate output pdsh/clubak style."
+collate.action = "store_true"
+collate.default = "None"
+collate.example = true
+collate.internal_default = true
+
+coll_header.name = ["-L"]
+coll_header.help = "Disable collated header block (clubak -L opt)"
+coll_header.action = "store_true"
+coll_header.example = true
+coll_header.internal_default = true
+
+partition_only.name = ["--partition-only"]
+partition_only.help = "Only show partitioning info."
+partition_only.action = "store_true"
+partition_only.example = false
+partition_only.internal_default = false
+
+transport.name = ["--transport"]
+transport.choices = ["nfs", "git"]
+transport.help = "Use NFS backend or Git backends."
+transport.type = "str"
+transport.example = "nfs"
+transport.internal_default = "nfs"
