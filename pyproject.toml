@@ -77,7 +77,7 @@ include = ["ClushibleApp*"]
 exclude = ["old*", "example_configs*"]
 
 [tool.setuptools.package-data]
-clushible = ["*.toml", "etc/*.toml"]
+ClushibleApp = ["**/*.toml", "etc/*.toml"]
 
 [tool.black]
 line-length = 100
