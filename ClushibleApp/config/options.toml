@@ -1,15 +1,28 @@
 # TOML Configuration CLI Options
 # Also used to dump a configuration file template
 # 
-# Special value for X.example: "SUPPRESS" means do not include in config file
+# Sections: core, ansible, clushible
+#           Others may be added later (e.g., git, copybackends, etc)
 #
+# X.file_option: if false, option is not included in config file template
+# X.cli_option: if false, option is not included in CLI arguments
+#
+# NOTE: X.default is the argparse default
+#       X.internal_default is app internal default
+#
+#       X.default should almost always be "None" to avoid the argparse
+#       overriding config file values. This is silly, but the way it is.
+#
+#       I may just get rid of the concept of applying argparse defaults
+#       entirely in favor of internal defaults later.
 
 [core]
 config.name = ["-c", "--config"]
 config.help = "Path to Clushible TOML configuration file"
 config.default = "None"
-config.example = "SUPPRESS" # Cannot be used in config file
+config.example = "/etc/clushible.toml"
 config.internal_default = "/etc/clushible.toml"
+config.file_option = false
 
 dry_run.name = ["--dry-run"]
 dry_run.help = "Perform a dry run without executing Ansible."
@@ -20,8 +33,9 @@ dry_run.internal_default = false
 dump_config_template.name = ["--dump-config-template"]
 dump_config_template.help = "Dump a configuration file template and exit."
 dump_config_template.action = "store_true"
-dump_config_template.example = "SUPPRESS"
+dump_config_template.example = false
 dump_config_template.internal_default = false
+dump_config_template.file_option = false
 
 logging_level.name = ["--logging-level"]
 logging_level.choices = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -39,8 +53,9 @@ verbose.internal_default = 0
 version.name = ["-V", "--version"]
 version.help = "Show version and exit"
 version.action = "store_true"
-version.example = "SUPPRESS"
+version.example = false
 version.internal_default = false
+version.file_option = false
 
 [ansible]
 check.name = ["--check"]
@@ -91,29 +106,36 @@ vault_password_file.example = "/root/ansible.passwd"
 tags.name = ["--tags"]
 tags.help = "Ansible tags to run."
 tags.type = "str"
-tags.example = "SUPPRESS"
+tags.example = "core,network,name-services,..."
+tags.internal_default = ""
+tags.file_option = false
 
 skip_tags.name = ["--skip-tags"]
 skip_tags.help = "Ansible tags to skip."
 skip_tags.type = "str"
-skip_tags.example = "SUPPRESS"
+skip_tags.example = "progenv,pbs,..."
+skip_tags.internal_default = ""
+skip_tags.file_option = false
 
 [clushible]
 runners.name = ["--runners"]
 runners.help = "Ansible Runners (clushible children)"
 runners.type = "str"
 runners.example = "@su-leaders"
+runners.internal_default = ""
 
 targets.name = ["-w", "--targets"]
 targets.help = "Ansible target nodes (pdsh/clush format). Ex. dec[0001-2488],deg[0001-0082]"
 targets.type = "str"
-targets.example = "SUPPRESS"
+targets.example = "@mtn:cpu,gug00[01-02]"
+targets.file_option = false
 
 nsets.name = ["-n", "--nsets"]
 nsets.help = "Number of sets to force split into. "
 nsets.type = "int"
-nsets.example = "SUPPRESS"
+nsets.example = 14
 nsets.internal_default = 0
+nsets.file_option = false # doesn't really make sense in the config file, but open to debate
 
 disable_target_validation.name = ["--disable-target-validation"]
 disable_target_validation.help = "Disable target nodeset validation."

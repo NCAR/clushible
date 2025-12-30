@@ -40,6 +40,8 @@ class ArgumentOption:
     choices: list = None
     example: Any = None
     internal_default: Any = None
+    file_option: bool = True
+    cli_option: bool = True
 
 def _dict_to_namespace(d: dict) -> SimpleNamespace:
     """Recursively converts a dictionary (and its nested dicts) to SimpleNamespace."""
@@ -54,7 +56,7 @@ def _load_toml_opts():
     """
     Docstring for _load_toml_opts
     """
-    opts_file = Path(__file__).parent / "config_opts.toml"
+    opts_file = Path(__file__).parent / "options.toml"
     with opts_file.open("rb") as f:
         data = tomllib.load(f)
 
@@ -76,8 +78,10 @@ def _generate_argument_options():
                 default=option_values.get("default", None),
                 type=_type_map[option_values.get("type", "Any")],
                 choices=option_values.get("choices"),
-                example=option_values.get("example", "SUPPRESS"),
-                internal_default=option_values.get("internal_default", None)
+                example=option_values.get("example", "None"),
+                internal_default=option_values.get("internal_default", None),
+                file_option=option_values.get("file_option", True),
+                cli_option=option_values.get("cli_option", True),
             )
             argument_options[section][option_key] = argument_option
 
@@ -137,17 +141,22 @@ def _dump_config_template():
         for option_key, option in options.items():
             # Use example if available
             value = None
+            if option.file_option is False:
+                continue
             try:
                 # This is as bit silly, but we'll just try to access and if
                 # fail, move on.
                 option.example
                 value = option.example
-                if value in {"SUPPRESS"}:
-                    continue
             except AttributeError:
-                if option.default not in {None, "None"}:
-                    value = option.default
+                try:
+                    option.default
+                    if option.default not in {None, "None"}:
+                        value = option.default
+                except AttributeError:
+                    pass
 
+            # If an internal default is defined, use that instead.
             try:
                 option.internal_default
                 if value is None:
@@ -161,8 +170,8 @@ def _dump_config_template():
             if isinstance(value, bool):
                 value = f"{str(value).lower()}"
 
-            #if value is None:
-            #    value = "''"
+            if value is None:
+                value = '"None"'
 
             config_lines.append(f"# {option.help}")
             config_lines.append(f"#{option_key} = {value}\n")
