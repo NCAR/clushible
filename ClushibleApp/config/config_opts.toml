@@ -17,7 +17,6 @@ dry_run.action = "store_true"
 dry_run.example = false
 dry_run.internal_default = false
 
-
 dump_config_template.name = ["--dump-config-template"]
 dump_config_template.help = "Dump a configuration file template and exit."
 dump_config_template.action = "store_true"
