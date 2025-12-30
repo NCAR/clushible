@@ -29,8 +29,7 @@ def show_config(args: dict) -> None:
 
 
 def main() -> int:
-    #conf = config.get_config()
-    # This is now a Singleton (still namespace-based though)
+    # Configuration is now a singleton (still namespace-based though)
     conf = CONFIG
 
     if conf.core.version:

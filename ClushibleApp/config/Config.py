@@ -29,6 +29,7 @@ _type_map = {
     "any": Any,
 }
 
+
 @dataclass
 class ArgumentOption:
     name: list
@@ -43,14 +44,18 @@ class ArgumentOption:
     file_option: bool = True
     cli_option: bool = True
 
+
 def _dict_to_namespace(d: dict) -> SimpleNamespace:
     """Recursively converts a dictionary (and its nested dicts) to SimpleNamespace."""
     if isinstance(d, dict):
-        return SimpleNamespace(**{k: _dict_to_namespace(v) for k, v in d.items()})
+        return SimpleNamespace(
+            **{k: _dict_to_namespace(v) for k, v in d.items()}
+        )
     elif isinstance(d, list):
         return [_dict_to_namespace(elem) for elem in d]
     else:
         return d
+
 
 def _load_toml_opts():
     """
@@ -61,6 +66,7 @@ def _load_toml_opts():
         data = tomllib.load(f)
 
     return data
+
 
 def _generate_argument_options():
     """Generate argument options from the TOML configuration."""
@@ -86,6 +92,7 @@ def _generate_argument_options():
             argument_options[section][option_key] = argument_option
 
     return argument_options
+
 
 def _generate_cli_parser():
     """Generate the CLI parser based on argument options."""
@@ -129,6 +136,7 @@ def _generate_cli_parser():
             group.add_argument(*option.name, **kwargs)
 
     return parser
+
 
 def _dump_config_template():
     """Dump a configuration template based on the argument options."""
@@ -206,7 +214,7 @@ def _get_cli_args() -> argparse.Namespace:
 def _construct_default_config() -> dict:
     config_dict = _load_toml_opts()
     default_config = dict()
-    #pprint(config_dict)
+    # pprint(config_dict)
     for section, options in config_dict.items():
         default_config[section] = dict()
         for option_key, option_values in options.items():
@@ -216,12 +224,11 @@ def _construct_default_config() -> dict:
             else:
                 default_config[section][option_key] = ""
 
-            #print(f"{section}.{option_key} = {int_default}")
+            # print(f"{section}.{option_key} = {int_default}")
     return default_config
 
 
 def _overlay_config_files(config: dict, config_files: list[str] = []) -> None:
-
     if len(config_files) == 0:
         if "CLUSHIBLE_CONFIG" in os.environ.keys():
             config_files.append(os.environ["CLUSHIBLE_CONFIG"])
@@ -253,11 +260,12 @@ def _overlay_config_files(config: dict, config_files: list[str] = []) -> None:
                 continue
             o[k] = v
 
-def _overlay_cli_args(config: dict, cli_args: argparse.Namespace):
 
+def _overlay_cli_args(config: dict, cli_args: argparse.Namespace):
     for section, opts in vars(cli_args).items():
         sec, opt = section.split("_", 1)
         config[sec][opt] = opts
+
 
 def _pre_process_cli_args(args: argparse.Namespace) -> None:
     """Pre-process CLI args if needed."""
@@ -266,9 +274,13 @@ def _pre_process_cli_args(args: argparse.Namespace) -> None:
         print(f"Clushible {__version__}")
         sys.exit(0)
 
-    if hasattr(args, "core_dump_config_template") and args.core_dump_config_template:
+    if (
+        hasattr(args, "core_dump_config_template")
+        and args.core_dump_config_template
+    ):
         print(_dump_config_template())
         sys.exit(0)
+
 
 def _get_config(args: argparse.Namespace) -> dict:
     """Get the final configuration by overlaying defaults, config files, and CLI args."""
@@ -277,26 +289,27 @@ def _get_config(args: argparse.Namespace) -> dict:
     _pre_process_cli_args(args)
 
     # Overlay config files
-    try: 
+    try:
         if args.core_config:
             config_files = [args.core_config]
     except AttributeError:
-            config_files = []
+        config_files = []
 
     _overlay_config_files(config, config_files)
 
     # Overlay CLI args
     _overlay_cli_args(config, args)
 
-    return config 
+    return config
+
 
 CONFIG = _dict_to_namespace(_get_config(_get_cli_args()))
 
 # Main block for testing purposes for now
 if __name__ == "__main__":
     pass
-    #pprint(CONFIG)
-    #args = _get_cli_args()
-    #_get_config(args)
-    #print(construct_default_config())
-    #print(dump_config_template())
+    # pprint(CONFIG)
+    # args = _get_cli_args()
+    # _get_config(args)
+    # print(construct_default_config())
+    # print(dump_config_template())

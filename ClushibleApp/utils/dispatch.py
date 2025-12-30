@@ -24,7 +24,6 @@ def get_runner_procs(conf):
         conf.clushible.mkdir = "/bin/mkdir"
         conf.clushible.mktemp = "/usr/bin/mktemp"
 
-
     runners = NodeSet(conf.clushible.runners)
     R = task_self()
     R.run(nproc_cmd, nodes=conf.clushible.runners)

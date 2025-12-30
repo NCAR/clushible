@@ -7,6 +7,7 @@ from ClusterShell.NodeSet import NodeSet, expand
 
 from . import msg
 
+
 def validate_ansible_setup(conf):
     """Validates that Ansible paths exist on the local system."""
     if not Path(conf.ansible.playbook_cmd).exists():
@@ -41,7 +42,7 @@ def validate_ansible_setup(conf):
 def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     now = dt.datetime.now()
-    date_str = now.strftime('%Y%m%d-%H%M')
+    date_str = now.strftime("%Y%m%d-%H%M")
 
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
