@@ -22,6 +22,10 @@ forks = 0
 #project_dir = "/opt/ncar/hsg-ansible"
 project_dir = "/Users/jbaker/Code/github/hsg-ansible"
 
+# Ansible playbook to run.
+#playbook = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+playbook = "/Users/jbaker/Code/github/hsg-ansible/nwsc3-playbook.yml"
+
 # Ansible playbook command.
 playbook_cmd = "/opt/homebrew/bin/ansible-playbook"
 
