@@ -19,6 +19,14 @@ def validate_ansible_setup(conf):
             f"Ansible project dir '{conf.ansible.project_dir}' does not exist. Exiting."
         )
 
+    if conf.ansible.playbook == "":
+        msg.error("No Ansible playbook specified. Exiting.")
+
+    if not Path(conf.ansible.playbook).is_file():
+        msg.error(
+            f"Ansible playbook file '{conf.ansible.playbook}' does not exist. Exiting."
+        )
+
     if not Path(conf.ansible.inventory).exists():
         msg.error(
             f"Ansible inventory file '{conf.ansible.inventory}' does not exist. Exiting."
@@ -34,13 +42,13 @@ def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     now = dt.datetime.now()
     date_str = now.strftime('%Y%m%d-%H%M')
-    print(conf.ansible)
+
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
         "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
-        "/usr/bin/mkdir -p /var/tmp/clushible/;",
-        f"CLUSHIBLE_LOCAL_FILE=$(/usr/bin/mktemp '/var/tmp/clushible/{date_str}.XXX.log');",
-        "/usr/bin/echo" if conf.core.dry_run else "",
+        f"{conf.clushible.mkdir} -p /var/tmp/clushible/;",
+        f"CLUSHIBLE_LOCAL_FILE=$({conf.clushible.mktemp} '/var/tmp/clushible/{date_str}.XXX.log');",
+        f"{conf.clushible.echo}" if conf.core.dry_run else "",
         conf.ansible.playbook_cmd,
         f"-i {conf.ansible.inventory}",
         f"--forks {str(conf.ansible.forks)}",
