@@ -77,6 +77,12 @@ inventory.default = "None"
 inventory.example = "/opt/ncar/hsg-ansible/derecho-inventory.yml"
 inventory.internal_default = ""
 
+playbook.name = ["--playbook"]
+playbook.help = "Ansible playbook to run."
+playbook.type = "str"
+playbook.default = "None"
+playbook.example = "/opt/ncar/hsg-ansible/nwsc3-playbook.yml"
+
 vault_password_file.name = ["--vault-password-file"]
 vault_password_file.help = "Ansible vault password file."
 vault_password_file.type = "str"

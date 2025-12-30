@@ -34,7 +34,7 @@ def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
     """Generates the Ansible playbook command based on configuration and extra vars."""
     now = dt.datetime.now()
     date_str = now.strftime('%Y%m%d-%H%M')
-
+    print(conf.ansible)
     cmd = [
         f"cd {conf.ansible.project_dir}; ",
         "export ANSIBLE_STDOUT_CALLBACK=clushible; ",
@@ -44,7 +44,7 @@ def generate_playbook_cmd(conf, target: NodeSet, extra_vars: dict = {}):
         conf.ansible.playbook_cmd,
         f"-i {conf.ansible.inventory}",
         f"--forks {str(conf.ansible.forks)}",
-        f"--vault-password-file {conf.ansible.vault_passwd_file}",
+        f"--vault-password-file {conf.ansible.vault_password_file}",
         "-C" if conf.ansible.check else "",
         f"-l {','.join(expand(target))}",  # ",".join(expand(target)),
         f"--tags={conf.ansible.tags}" if conf.ansible.tags else "",
